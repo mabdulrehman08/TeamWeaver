@@ -50,16 +50,7 @@ Reason:
 
 ### Model Providers
 
-The following API variables are already available in the user’s environment:
-
-```bash
-OPENAI_API_KEY=
-ANTHROPIC_API_KEY=
-GEMINI_API_KEY=
-OPENROUTER_API_KEY=
-```
-
-Use all four providers if possible.
+Use all four verified providers if possible.
 
 Provider strategy for 20 personas:
 
@@ -89,14 +80,6 @@ Architect for 100 later, but do not optimize for 100 until the 20-person demo pa
 
 ### Redis
 
-The following Redis Agent Memory variables are already available:
-
-```bash
-REDIS_AGENT_MEMORY_ENDPOINT=
-REDIS_AGENT_MEMORY_API_KEY=
-REDIS_AGENT_MEMORY_STORE_ID=
-```
-
 Use Redis Iris Agent Memory for:
 
 * Persona profile storage.
@@ -107,13 +90,6 @@ Use Redis Iris Agent Memory for:
 Do not build raw Redis hashes or pub/sub as the primary memory implementation.
 
 ### Weave
-
-The following Weave variables are already available:
-
-```bash
-WEAVE_API_KEY=
-WEAVE_PROJECT_NAME=campaign-persona-agent
-```
 
 Use Weave for all backend observability.
 
@@ -185,15 +161,17 @@ For AG-UI streaming, Weave, and Redis:
 * Add fallbacks only if needed.
 * Still implement safe failure handling so the app does not crash.
 
-## 2. Environment Setup
+## 2. Environment Configuration and Verified Services
 
-Create:
+The local `.env` is present, gitignored, and contains the real secret values.
+
+The committed example file is:
 
 ```text
 apps/backend/.env.example
 ```
 
-with:
+It should stay secret-free and include:
 
 ```bash
 OPENAI_API_KEY=
@@ -219,6 +197,40 @@ Do not commit real secrets.
 The backend should load `.env` locally and validate configuration at startup.
 
 Startup output should be safe and should not print secrets.
+
+### 2.1 Verified on 2026-06-06
+
+The existing local `.env` was checked without printing or copying secret values.
+
+Required variables present and non-empty:
+
+```bash
+OPENAI_API_KEY
+ANTHROPIC_API_KEY
+GEMINI_API_KEY
+OPENROUTER_API_KEY
+REDIS_AGENT_MEMORY_ENDPOINT
+REDIS_AGENT_MEMORY_API_KEY
+REDIS_AGENT_MEMORY_STORE_ID
+WEAVE_API_KEY
+WEAVE_PROJECT_NAME
+```
+
+Live smoke checks passed:
+
+* OpenAI authenticated and generated with `gpt-4o-mini`.
+* Anthropic authenticated and generated with `claude-haiku-4-5-20251001`.
+* Gemini authenticated and generated with `gemini-2.5-flash`.
+* OpenRouter authenticated and generated with `openai/gpt-4o-mini`.
+* Redis Agent Memory accepted the configured endpoint, API key, and store ID for `GET /v1/stores/{storeId}/session-memory`.
+* Weave trace service was healthy, the W&B key authenticated, and the configured project resolved as `andrew2115-minerva-university/campaign-persona-agent`.
+
+Redis implementation note:
+
+* Python's default `urllib` request received a WAF-style `403` from Redis Agent Memory.
+* The same Redis check passed with `curl`.
+* The same Redis check also passed from Python after setting an explicit normal `User-Agent`.
+* The backend should use the official Redis Agent Memory SDK or set a normal `User-Agent` on raw HTTP calls.
 
 Expected startup summary:
 
@@ -996,6 +1008,8 @@ Create scripts under:
 apps/backend/app/scripts/
 ```
 
+These scripts should codify the direct `.env` checks already completed on 2026-06-06 and make them repeatable from the backend app.
+
 ### 12.1 Check All Services
 
 Command:
@@ -1006,22 +1020,23 @@ python -m app.scripts.check_services
 
 Tests:
 
-* OpenAI minimal request.
-* Anthropic minimal request.
-* Gemini minimal request.
-* OpenRouter minimal request.
-* Redis Agent Memory write/read probe.
-* Weave initialization and test trace.
+* OpenAI minimal request, with tiny generation.
+* Anthropic minimal request, with tiny generation.
+* Gemini minimal request, with tiny generation.
+* OpenRouter minimal request, with tiny generation.
+* Redis Agent Memory read probe first.
+* Redis Agent Memory write/read probe only when an explicit safe test namespace or cleanup path is implemented.
+* Weave authentication, trace service health, and project resolution.
 
 Expected output:
 
 ```text
-[ok] OpenAI configured
-[ok] Anthropic configured
-[ok] Gemini configured
-[ok] OpenRouter configured
-[ok] Redis Agent Memory configured
-[ok] Weave configured: campaign-persona-agent
+[ok] OpenAI generated with <model>
+[ok] Anthropic generated with <model>
+[ok] Gemini generated with <model>
+[ok] OpenRouter generated with <model>
+[ok] Redis Agent Memory connected
+[ok] Weave configured: andrew2115-minerva-university/campaign-persona-agent
 ```
 
 ### 12.2 Check Redis
@@ -1035,20 +1050,20 @@ python -m app.scripts.check_redis_memory
 Test flow:
 
 1. Connect to Redis Agent Memory.
-2. Write test persona profile.
-3. Read test persona profile.
-4. Write test reaction history.
-5. Read test reaction history.
-6. Print success.
+2. Read session memory for the configured store.
+3. Use the official SDK or a normal explicit `User-Agent` for raw HTTP.
+4. Write test persona profile only after a safe test namespace or cleanup path exists.
+5. Read test persona profile.
+6. Write test reaction history only after a safe test namespace or cleanup path exists.
+7. Read test reaction history.
+8. Print success.
 
 Expected output:
 
 ```text
 [ok] Connected to Redis Agent Memory
-[ok] Wrote test persona profile
-[ok] Read test persona profile
-[ok] Wrote test reaction history
-[ok] Read test reaction history
+[ok] Read session memory
+[ok] Test writes skipped until safe namespace/cleanup exists
 Redis Agent Memory validation passed
 ```
 
@@ -1072,7 +1087,7 @@ Expected output:
 ```text
 [ok] Weave initialized
 [ok] Test trace created
-Project: campaign-persona-agent
+Project: andrew2115-minerva-university/campaign-persona-agent
 ```
 
 ### 12.4 Smoke Test Demo
@@ -1112,13 +1127,13 @@ Smoke test passed
 Implement first:
 
 1. Backend config module.
-2. `.env.example`.
-3. Safe environment loading.
-4. Safe startup summary.
-5. Provider config validation.
-6. Redis validation script.
-7. Weave validation script.
-8. 3-persona smoke test.
+2. Safe environment loading from the existing local `.env`.
+3. Safe startup summary.
+4. Provider config validation.
+5. Redis validation script.
+6. Weave validation script.
+7. 3-persona smoke test.
+8. Keep `apps/backend/.env.example` in sync as backend settings evolve.
 
 Do not implement full frontend first.
 
@@ -1286,28 +1301,25 @@ Implement the backend configuration and validation layer for Campaign Persona Ag
 Context:
 We are building a WeaveHacks demo: a synthetic voter focus group that runs 20 multi-model persona agents against a Dobbs v. Jackson stimulus, streams persona reactions into a CopilotKit/AG-UI frontend, synthesizes demographic sentiment, compares against hardcoded Dobbs benchmark data, traces every agent in Weave, and stores persona profiles/reaction history in Redis Iris Agent Memory.
 
-Already available environment variables:
-OPENAI_API_KEY
-ANTHROPIC_API_KEY
-GEMINI_API_KEY
-OPENROUTER_API_KEY
-REDIS_AGENT_MEMORY_ENDPOINT
-REDIS_AGENT_MEMORY_API_KEY
-REDIS_AGENT_MEMORY_STORE_ID
-WEAVE_API_KEY
-WEAVE_PROJECT_NAME=campaign-persona-agent
+Use the verified environment configuration from section 2.1.
+
+Verified live services:
+OpenAI, Anthropic, Gemini, OpenRouter, Redis Agent Memory, and Weave.
+
+Already created:
+apps/backend/.env.example
 
 Build first:
 1. Backend config module.
-2. .env.example.
-3. Safe environment loading.
-4. Safe startup summary that never prints secrets.
-5. Provider availability validation.
-6. Redis Agent Memory validation script.
-7. Weave validation script.
-8. 3-persona smoke test.
-9. Local persona JSON fallback.
-10. Local Dobbs benchmark JSON file.
+2. Safe environment loading.
+3. Safe startup summary that never prints secrets.
+4. Provider availability validation scripts that reproduce the verified smoke checks.
+5. Redis Agent Memory validation script, including the explicit User-Agent note for raw HTTP.
+6. Weave validation script.
+7. 3-persona smoke test.
+8. Local persona JSON fallback.
+9. Local Dobbs benchmark JSON file.
+10. Keep apps/backend/.env.example in sync as backend settings evolve.
 
 Do not build the full frontend yet.
 Do not commit real secrets.
@@ -1320,13 +1332,13 @@ Optimize for a reliable 20-person Dobbs demo.
 The first implementation pass is complete when:
 
 1. Backend starts locally.
-2. `.env.example` exists.
+2. `apps/backend/.env.example` remains secret-free and matches backend config requirements.
 3. Startup prints safe config summary.
 4. Missing secrets are reported clearly.
 5. No secret values are printed.
 6. Redis Agent Memory can be checked independently.
 7. Weave can be checked independently.
-8. At least one model provider can be checked independently.
+8. All four verified model providers can be checked independently.
 9. Local persona fallback exists.
 10. Local Dobbs benchmark file exists.
 11. A 3-persona smoke test runs persona agents, synthesis, benchmark, and Weave trace creation.
