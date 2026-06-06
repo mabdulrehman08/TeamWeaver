@@ -1,0 +1,28 @@
+{
+  "name": "persona-campaign-simulator",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "lint": "tsc --noEmit",
+    "preview": "vite preview --host 0.0.0.0",
+    "smoke:copilot": "node scripts/smoke-copilot.mjs"
+  },
+  "dependencies": {
+    "@copilotkit/react-core": "file:vendor/copilotkit-react-core",
+    "@copilotkit/react-ui": "file:vendor/copilotkit-react-ui",
+    "vite": "latest",
+    "typescript": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "recharts": "latest",
+    "lucide-react": "latest"
+  },
+  "devDependencies": {
+    "autoprefixer": "latest",
+    "postcss": "latest",
+    "tailwindcss": "3.4.17"
+  }
+}
