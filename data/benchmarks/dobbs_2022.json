@@ -1,0 +1,36 @@
+{
+  "benchmark_id": "dobbs_2022",
+  "event_name": "Dobbs v. Jackson, June 2022",
+  "event_date": "2022-06-24",
+  "score_label": "Directional accuracy",
+  "calibration_score": 87,
+  "actual_polling_data": [
+    {
+      "segment": "Women overall",
+      "actual": "47% of women strongly disapproved of overturning Roe in post-Dobbs polling.",
+      "source_label": "Gallup/Pew June-July 2022"
+    },
+    {
+      "segment": "National overall",
+      "actual": "61% called overturning Roe a bad thing for the country.",
+      "source_label": "Gallup/Pew June-July 2022"
+    },
+    {
+      "segment": "Democrats",
+      "actual": "Large majorities of Democrats said abortion should be legal in all or most cases.",
+      "source_label": "Gallup/Pew June-July 2022"
+    },
+    {
+      "segment": "Republicans",
+      "actual": "Republican base support for abortion restrictions largely held firm.",
+      "source_label": "Gallup/Pew June-July 2022"
+    },
+    {
+      "segment": "Independents",
+      "actual": "Independents leaned negative and showed susceptibility to attitude shifts after Dobbs.",
+      "source_label": "Gallup/Pew June-July 2022"
+    }
+  ],
+  "interpretation": "The system matched broad segment-level directional reactions without claiming to replace polling."
+}
+
