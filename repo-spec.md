@@ -143,7 +143,13 @@ Recommendation accepted:
 
 ### AG-UI Contract
 
-Draft the AG-UI contract now. No more input needed.
+The async frontend/backend contract lives in:
+
+```text
+docs/frontend-backend-contract.md
+```
+
+Use that document as the source of truth for request shape, stream transport, event envelopes, payload schemas, mock streams, and ownership boundaries.
 
 ### Persona Set
 
