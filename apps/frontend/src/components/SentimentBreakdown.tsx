@@ -1,4 +1,5 @@
 import type { SynthesisSegmentPayload } from "../lib/agui";
+import { SegmentInsightCard } from "./SegmentInsightCard";
 
 type Props = {
   segments: SynthesisSegmentPayload[];
@@ -9,20 +10,37 @@ export function SentimentBreakdown({ segments }: Props) {
     return <p className="empty-note">Segment synthesis will appear after persona reactions finish.</p>;
   }
 
+  const counts = segments.reduce(
+    (acc, segment) => {
+      const direction = segment.sentiment_direction.includes("positive")
+        ? "positive"
+        : segment.sentiment_direction.includes("negative")
+          ? "negative"
+          : "mixed";
+      acc[direction] += segment.persona_count;
+      return acc;
+    },
+    { positive: 0, negative: 0, mixed: 0 }
+  );
+  const total = Math.max(1, counts.positive + counts.negative + counts.mixed);
+
   return (
-    <div className="segment-list">
+    <div className="sentiment-block">
+      <div className="sentiment-bars" aria-label="Sentiment breakdown">
+        <span className="sentiment-bar negative" style={{ width: `${(counts.negative / total) * 100}%` }} />
+        <span className="sentiment-bar mixed" style={{ width: `${(counts.mixed / total) * 100}%` }} />
+        <span className="sentiment-bar positive" style={{ width: `${(counts.positive / total) * 100}%` }} />
+      </div>
+      <div className="sentiment-legend">
+        <span>Negative {counts.negative}</span>
+        <span>Mixed {counts.mixed}</span>
+        <span>Positive {counts.positive}</span>
+      </div>
+      <div className="segment-list">
       {segments.map((segment) => (
-        <article className="segment-card" key={segment.segment_id}>
-          <div>
-            <span className="pill">{segment.sentiment_direction.replaceAll("_", " ")}</span>
-            <span className="pill ghost">{segment.movement_signal.replaceAll("_", " ")}</span>
-          </div>
-          <h3>{segment.segment_name}</h3>
-          <p>{segment.summary}</p>
-          <small>{segment.persona_count} persona(s)</small>
-        </article>
+        <SegmentInsightCard key={segment.segment_id} segment={segment} />
       ))}
+      </div>
     </div>
   );
 }
-

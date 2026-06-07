@@ -3,8 +3,10 @@ from __future__ import annotations
 import logging
 
 from fastapi import FastAPI
+from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+import httpx
 
 from app.config import get_settings
 from app.orchestrator import CampaignOrchestrator
@@ -44,6 +46,64 @@ async def health() -> dict[str, object]:
     }
 
 
+@app.api_route(
+    "/api/copilotkit",
+    methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+)
+@app.api_route(
+    "/api/copilotkit/{path:path}",
+    methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+)
+async def copilotkit_proxy(request: Request, path: str = "") -> StreamingResponse:
+    target_url = f"{settings.copilot_runtime_url}{request.url.path}"
+    if request.url.query:
+        target_url = f"{target_url}?{request.url.query}"
+
+    excluded_request_headers = {"host", "content-length", "connection"}
+    request_headers = {
+        key: value
+        for key, value in request.headers.items()
+        if key.lower() not in excluded_request_headers
+    }
+
+    excluded_response_headers = {
+        "content-encoding",
+        "content-length",
+        "connection",
+        "transfer-encoding",
+    }
+
+    body = await request.body()
+    client = httpx.AsyncClient(timeout=None)
+    upstream_request = client.build_request(
+        request.method,
+        target_url,
+        headers=request_headers,
+        content=body,
+    )
+    upstream_response = await client.send(upstream_request, stream=True)
+
+    async def response_body():
+        try:
+            async for chunk in upstream_response.aiter_bytes():
+                yield chunk
+        finally:
+            await upstream_response.aclose()
+            await client.aclose()
+
+    response_headers = {
+        key: value
+        for key, value in upstream_response.headers.items()
+        if key.lower() not in excluded_response_headers
+    }
+    return StreamingResponse(
+        response_body(),
+        status_code=upstream_response.status_code,
+        headers=response_headers,
+        media_type=upstream_response.headers.get("content-type"),
+    )
+
+
 @app.post("/api/runs")
 async def run_campaign(request: RunRequest) -> StreamingResponse:
     orchestrator: CampaignOrchestrator = app.state.orchestrator
@@ -61,4 +121,3 @@ async def run_campaign(request: RunRequest) -> StreamingResponse:
             "X-Accel-Buffering": "no",
         },
     )
-

@@ -9,6 +9,11 @@ export function BenchmarkComparison({ benchmark }: Props) {
     return <p className="empty-note">Benchmark comparison waits for synthesis output.</p>;
   }
 
+  const rows = benchmark.simulated_distribution.map((simulated) => {
+    const actual = benchmark.actual_polling_data.find((item) => item.segment === simulated.segment);
+    return { simulated, actual };
+  });
+
   return (
     <article className="benchmark-card">
       <div className="score-orb">
@@ -20,24 +25,21 @@ export function BenchmarkComparison({ benchmark }: Props) {
         <p>{benchmark.interpretation}</p>
       </div>
       <div className="benchmark-grid">
-        <div>
-          <h4>Simulated</h4>
-          {benchmark.simulated_distribution.map((item) => (
-            <p key={item.segment}>
-              <strong>{item.segment}:</strong> {item.simulated}
+        {rows.map(({ simulated, actual }) => (
+          <div className="benchmark-row" key={simulated.segment}>
+            <span className="match-indicator">Match</span>
+            <h4>{simulated.segment}</h4>
+            <p>
+              <strong>Simulated:</strong> {simulated.simulated}
             </p>
-          ))}
-        </div>
-        <div>
-          <h4>Historical polling</h4>
-          {benchmark.actual_polling_data.map((item) => (
-            <p key={item.segment}>
-              <strong>{item.segment}:</strong> {item.actual} <em>{item.source_label}</em>
-            </p>
-          ))}
-        </div>
+            {actual ? (
+              <p>
+                <strong>Historical:</strong> {actual.actual} <em>{actual.source_label}</em>
+              </p>
+            ) : null}
+          </div>
+        ))}
       </div>
     </article>
   );
 }
-

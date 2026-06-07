@@ -75,6 +75,7 @@ class Settings:
     demo_mode: bool
     persona_count: int
     persona_concurrency_limit: int
+    copilot_runtime_url: str
 
     @classmethod
     def load(cls) -> "Settings":
@@ -93,6 +94,7 @@ class Settings:
             demo_mode=_parse_bool(env.get("DEMO_MODE"), default=True),
             persona_count=_parse_int(env.get("PERSONA_COUNT"), default=20),
             persona_concurrency_limit=_parse_int(env.get("PERSONA_CONCURRENCY_LIMIT"), default=25),
+            copilot_runtime_url=(env.get("COPILOT_RUNTIME_URL") or "http://localhost:3001").rstrip("/"),
         )
 
     def missing_required(self) -> list[str]:
@@ -169,4 +171,3 @@ class Settings:
 
 def get_settings() -> Settings:
     return Settings.load()
-

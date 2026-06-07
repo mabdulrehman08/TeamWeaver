@@ -1,16 +1,18 @@
+@import "tailwindcss";
+
 :root {
-  color: #231f20;
-  background: #efe6d3;
+  color: #f8edd8;
+  background: #121515;
   font-family: "Avenir Next", "Trebuchet MS", sans-serif;
-  --ink: #231f20;
-  --paper: #fff8eb;
-  --field: #f8edd8;
-  --clay: #bd4f31;
-  --moss: #3f5f49;
-  --navy: #183348;
+  --ink: #f8edd8;
+  --paper: #171b1b;
+  --field: #222827;
+  --clay: #e56c44;
+  --moss: #77a878;
+  --navy: #0f2530;
   --gold: #d9a441;
-  --line: rgba(35, 31, 32, 0.16);
-  --shadow: 0 28px 80px rgba(48, 37, 23, 0.18);
+  --line: rgba(248, 237, 216, 0.14);
+  --shadow: 0 28px 80px rgba(0, 0, 0, 0.32);
 }
 
 * {
@@ -22,18 +24,18 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(217, 164, 65, 0.42), transparent 28rem),
-    linear-gradient(135deg, #efe6d3 0%, #ead6b7 45%, #d7c6a8 100%);
+    radial-gradient(circle at top left, rgba(217, 164, 65, 0.28), transparent 28rem),
+    linear-gradient(135deg, #121515 0%, #18201f 48%, #101820 100%);
 }
 
-button,
-input,
-select,
-textarea {
+.simulation-app button,
+.simulation-app input,
+.simulation-app select,
+.simulation-app textarea {
   font: inherit;
 }
 
-main {
+.simulation-app {
   width: min(1420px, calc(100% - 32px));
   margin: 0 auto;
   padding: 36px 0 64px;
@@ -51,7 +53,7 @@ main {
 .control-deck,
 .panel {
   border: 1px solid var(--line);
-  background: rgba(255, 248, 235, 0.86);
+  background: rgba(23, 27, 27, 0.88);
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
 }
@@ -61,8 +63,8 @@ main {
   padding: 42px;
   border-radius: 34px;
   background:
-    linear-gradient(135deg, rgba(255, 248, 235, 0.92), rgba(255, 248, 235, 0.68)),
-    repeating-linear-gradient(90deg, rgba(35, 31, 32, 0.04) 0 1px, transparent 1px 18px);
+    linear-gradient(135deg, rgba(23, 27, 27, 0.94), rgba(24, 51, 72, 0.52)),
+    repeating-linear-gradient(90deg, rgba(248, 237, 216, 0.04) 0 1px, transparent 1px 18px);
 }
 
 .eyebrow {
@@ -74,37 +76,35 @@ main {
   text-transform: uppercase;
 }
 
-h1,
-h2,
-h3,
-h4,
-p {
+.simulation-app h1,
+.simulation-app h2,
+.simulation-app h3,
+.simulation-app h4,
+.simulation-app p {
   margin-top: 0;
 }
 
-h1 {
+.simulation-app h1 {
   max-width: 760px;
   margin-bottom: 20px;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(3rem, 8vw, 7.8rem);
   line-height: 0.84;
-  letter-spacing: -0.075em;
 }
 
-h2 {
+.simulation-app h2 {
   margin-bottom: 8px;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(1.9rem, 4vw, 3.3rem);
-  letter-spacing: -0.05em;
 }
 
-h3 {
+.simulation-app h3 {
   margin-bottom: 8px;
 }
 
 .hero-copy {
   max-width: 720px;
-  color: rgba(35, 31, 32, 0.76);
+  color: rgba(248, 237, 216, 0.76);
   font-size: 1.14rem;
   line-height: 1.7;
 }
@@ -142,18 +142,18 @@ h3 {
 
 .control-deck {
   display: grid;
-  grid-template-columns: 1.1fr 1fr 180px 170px 140px 180px;
+  grid-template-columns: 1.1fr 1fr 180px 150px 140px 180px;
   gap: 14px;
   margin: 24px 0;
   padding: 18px;
   border-radius: 28px;
 }
 
-label {
+.simulation-app label {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: rgba(35, 31, 32, 0.72);
+  color: rgba(248, 237, 216, 0.72);
   font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -164,8 +164,8 @@ label {
   min-width: 0;
 }
 
-select,
-textarea {
+.simulation-app select,
+.simulation-app textarea {
   width: 100%;
   min-height: 46px;
   border: 1px solid var(--line);
@@ -175,7 +175,7 @@ textarea {
   padding: 12px 14px;
 }
 
-textarea {
+.simulation-app textarea {
   min-height: 88px;
   resize: vertical;
 }
@@ -189,21 +189,17 @@ textarea {
   background: var(--field);
 }
 
-button {
+.simulation-app button {
   cursor: pointer;
+  min-height: 46px;
   border: none;
   border-radius: 18px;
   background: var(--clay);
   color: #fff8eb;
   font-weight: 900;
-  letter-spacing: -0.02em;
 }
 
-button.secondary {
-  background: var(--moss);
-}
-
-button:disabled {
+.simulation-app button:disabled {
   cursor: not-allowed;
   opacity: 0.56;
 }
@@ -212,8 +208,8 @@ button:disabled {
   margin-bottom: 24px;
   padding: 16px 20px;
   border-radius: 20px;
-  background: #ffe0d3;
-  color: #802c16;
+  background: rgba(229, 108, 68, 0.18);
+  color: #ffc7b4;
   font-weight: 800;
 }
 
@@ -233,6 +229,17 @@ button:disabled {
   margin-bottom: 18px;
 }
 
+.inline-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.segment-filter {
+  width: min(260px, 100%);
+}
+
 .persona-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -245,7 +252,7 @@ button:disabled {
 .red-flag {
   border: 1px solid var(--line);
   border-radius: 24px;
-  background: #fffaf0;
+  background: rgba(255, 250, 240, 0.06);
 }
 
 .persona-card {
@@ -266,23 +273,47 @@ button:disabled {
   text-transform: uppercase;
 }
 
+.model-badge {
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: rgba(229, 108, 68, 0.18);
+}
+
+.model-badge.openai {
+  color: #8fe3c4;
+}
+
+.model-badge.anthropic {
+  color: #ffc78f;
+}
+
+.model-badge.gemini {
+  color: #9ab9ff;
+}
+
+.model-badge.openrouter {
+  color: #f7a9e3;
+}
+
 .persona-meta,
 .empty-note,
 .summary-copy {
-  color: rgba(35, 31, 32, 0.66);
+  color: rgba(248, 237, 216, 0.66);
   line-height: 1.65;
 }
 
-blockquote {
+.simulation-app blockquote {
   margin: auto 0 16px;
   padding-left: 14px;
   border-left: 4px solid var(--gold);
-  color: var(--navy);
+  color: #fbdc8f;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 1.08rem;
 }
 
-.tag-row {
+.tag-row,
+.segment-card-header,
+.sentiment-legend {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -292,25 +323,26 @@ blockquote {
 .pill {
   border-radius: 999px;
   background: rgba(217, 164, 65, 0.22);
-  color: #5f3b00;
+  color: #fbdc8f;
   padding: 6px 10px;
   font-size: 0.72rem;
   font-weight: 800;
 }
 
 .pill.ghost {
-  background: rgba(63, 95, 73, 0.16);
-  color: var(--moss);
+  background: rgba(119, 168, 120, 0.16);
+  color: #a7d7a7;
 }
 
 .persona-card footer {
   margin-top: 18px;
-  color: rgba(35, 31, 32, 0.48);
+  color: rgba(248, 237, 216, 0.48);
   font-size: 0.76rem;
 }
 
 .segment-list,
-.red-flags {
+.red-flags,
+.sentiment-block {
   display: grid;
   gap: 12px;
 }
@@ -321,12 +353,12 @@ blockquote {
 }
 
 .red-flag {
-  border-color: rgba(189, 79, 49, 0.4);
-  background: #fff0e8;
+  border-color: rgba(229, 108, 68, 0.4);
+  background: rgba(229, 108, 68, 0.16);
 }
 
 .red-flag span {
-  color: var(--clay);
+  color: #ffc7b4;
   font-size: 0.76rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -334,6 +366,38 @@ blockquote {
 
 .quote-strip {
   margin: 14px 0;
+}
+
+.sentiment-bars {
+  display: flex;
+  width: 100%;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(248, 237, 216, 0.1);
+}
+
+.sentiment-bar {
+  min-width: 4px;
+}
+
+.sentiment-bar.negative {
+  background: #e56c44;
+}
+
+.sentiment-bar.mixed {
+  background: #d9a441;
+}
+
+.sentiment-bar.positive {
+  background: #77a878;
+}
+
+.sentiment-legend {
+  color: rgba(248, 237, 216, 0.62);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .benchmark-card {
@@ -370,17 +434,37 @@ blockquote {
 
 .benchmark-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 18px;
 }
 
 .benchmark-grid p {
-  color: rgba(35, 31, 32, 0.72);
+  color: rgba(248, 237, 216, 0.72);
   line-height: 1.5;
 }
 
-em {
-  color: rgba(35, 31, 32, 0.5);
+.benchmark-row {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(248, 237, 216, 0.05);
+}
+
+.match-indicator {
+  display: inline-flex;
+  margin-bottom: 10px;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: rgba(119, 168, 120, 0.16);
+  color: #a7d7a7;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.simulation-app em {
+  color: rgba(248, 237, 216, 0.5);
 }
 
 @keyframes rise {
@@ -408,7 +492,7 @@ em {
 }
 
 @media (max-width: 640px) {
-  main {
+  .simulation-app {
     width: min(100% - 20px, 1420px);
     padding-top: 18px;
   }
@@ -425,8 +509,13 @@ em {
     padding: 22px;
   }
 
-  .control-deck {
+  .control-deck,
+  .inline-heading {
     grid-template-columns: 1fr;
   }
-}
 
+  .inline-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

@@ -9,3 +9,4 @@ dist/
 *.tsbuildinfo
 apps/frontend/vite.config.js
 apps/frontend/vite.config.d.ts
+.gstack/

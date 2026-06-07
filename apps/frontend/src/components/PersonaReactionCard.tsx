@@ -8,8 +8,8 @@ export function PersonaReactionCard({ persona }: Props) {
   return (
     <article className="persona-card">
       <div className="card-kicker">
-        <span>{persona.provider}</span>
-        <span>{persona.latency_ms}ms</span>
+        <span className={`model-badge ${persona.provider}`}>{persona.provider}</span>
+        <span>{persona.latency_ms ? `${persona.latency_ms}ms` : "streamed"}</span>
       </div>
       <h3>{persona.persona_name}</h3>
       <p className="persona-meta">
@@ -18,7 +18,7 @@ export function PersonaReactionCard({ persona }: Props) {
       <p>{persona.reaction_text}</p>
       <blockquote>{persona.voter_voice_quote}</blockquote>
       <div className="tag-row">
-        {persona.segment_tags.map((tag) => (
+        {persona.segment_tags.slice(0, 4).map((tag) => (
           <span key={tag}>{tag.replaceAll("_", " ")}</span>
         ))}
       </div>
